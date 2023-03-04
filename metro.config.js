@@ -1,0 +1,13 @@
+const { getDefaultConfig } = require('metro-config');
+
+module.exports = (async () => {
+  const {
+    resolver: { sourceExts, assetExts }
+  } = await getDefaultConfig(__dirname);
+
+  return {
+    resolver: {
+      assetExts: [...assetExts, 'css', 'ttf']
+    }
+  };
+})();

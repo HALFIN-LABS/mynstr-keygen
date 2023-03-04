@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyNstr vanity key generator</title>
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/HALFIN-LABS/MyNostr-key-generator-app/develop/favicon-32x32.png"/>
+    <link rel="stylesheet" href="bootstrap.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/nostr-tools/lib/nostr.bundle.js"></script>
+    <script src="https://raw.githubusercontent.com/HALFIN-LABS/MyNostr-key-generator-app/master/snek.js"></script>
+    <!-- clarity -->
+    <script type="text/javascript">
+      (function(c,l,a,r,i,t,y){
+          c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+          t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      })(window, document, "clarity", "script", "g212olcm7p");
+  </script>
+  </head>
+  <body>
+    <h1><img src="assets/MYNSTR.png" width="80%"></h1>
+    <h4>Generate Nostr keys</h4>
+    <center><p>
+      - To generate a Nostr keyset, simply click on "create" and you'll generate a random pair
+      <br><br>
+        - - Select "Prefix" or "Suffix" and enter the characters you want in your pubic npub key.
+      <br><br>
+        - - You can't use b, i, o or 1 in your npub key, so be creative!
+      <br><br>
+        - - Check the 🎲 box to get a list of interesting npubs we generated while looking for yours.
+    </p></center>
+    <div class="nospace">
+      <div class="progress">
+        <div class="progress-bar progress-bar-striped progress-bar-animated bg-info" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+      </div>
+    </div>
+    <div class="container">
+      
+      <div class="form-group" style="color: #fff;">
+        <div class="row">
+          <!-- <div class="col-12 col-md-6">
+            <div class="d-flex justify-content-center justify-content-md-start pb-3"></div>
+          </div>
+          <div class="col-12 col-md-6"> -->
+            <div class="d-flex justify-content-center justify-content-md-end">
+              <div class="form-check mx-3 px-2">
+                <input class="form-check-input" type="radio" name="prefixRadio" id="prefixRadio" checked>
+                <label class="form-check-label" for="prefixRadio">
+                  Prefix
+                </label>
+              </div>
+              <div class="form-check pb-3 px-3">
+                <input class="form-check-input" type="radio" name="suffixRadio" id="suffixRadio">
+                <label class="form-check-label" for="suffixRadio">
+                  Suffix
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="wordsOfInterestCheck">
+                <label class="form-check-label" for="wordsOfInterestCheck">
+                  🎲
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- The actual snackbar -->
+     <div id="snackbar">Generating keys</div>
+
+        <div class="input-group shadow">
+          <input type="text" class="form-control form-control-lg" placeholder="prefix" id="prefix" data-inputmask-mask="[9-]AAA-999">
+          <button class="browse btn btn-primary" type="button" onclick="generate(); snek()">create</button>
+        </div>
+      </div>
+    </div>
+    <div class="container mt-4" style="color: #fff;">
+      <div class="pb-3 d-flex justify-content-center justify-content-md-start">
+        Your Nostr keys:
+      </div>
+      <div class="form-group">
+        <div class="input-group shadow mb-3">
+          <div class="form-floating flex-grow-1">
+              <input type="text" class="form-control" name="code1" placeholder="npub" id="npub">
+              <label for="code1" style="color: #000;">👀 Public npub key</label>
+          </div>
+          <button class="browse btn btn-primary" type="button" title="copy" onclick="copy('npub')">📋</button>
+        </div>
+        <div class="input-group shadow mb-3">
+          <div class="form-floating flex-grow-1">
+              <input type="text" class="form-control" name="code1" placeholder="nsec" id="nsec">
+              <label style="color: #000;">🔏 Private nsec key</label>
+          </div>
+          <button class="browse btn btn-primary" type="button" title="copy" onclick="copy('nsec')">📋</button>
+        </div>
+        <div class="input-group shadow mb-3">
+          <div class="form-floating flex-grow-1">
+              <input type="text" class="form-control" name="code1" placeholder="public key" id="public">
+              <label style="color: #000;">👀 Public hex key</label>
+          </div>
+          <button class="browse btn btn-primary" type="button" title="copy" onclick="copy('public')">📋</button>
+        </div>
+        <div class="input-group shadow mb-3">
+          <div class="form-floating flex-grow-1">
+              <input type="text" class="form-control" name="code1" placeholder="private key" id="private">
+              <label style="color: #000;">🔏 Private hex key</label>
+          </div>
+          <button class="browse btn btn-primary" type="button" title="copy" onclick="copy('private')">📋</button>
+        </div>
+        <div class="d-flex justify-content-between">
+          <div>
+            <span id="counter">0</span>&nbsp; generated
+          </div>
+          <div>
+            &nbsp;<span id="time">0</span>&nbsp;seconds
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="wordsOfInterestContainer" class="container mt-4" style="display:none">
+      <p>Interesting words we found while creating your address:</p>
+      <div class="row">
+        <div class="col-sm-12 table-responsive small" style="color: #fff;">
+          <table class="table" style="color: #fff;">
+            <thead style="color: #fff;">
+              <tr style="color: #fff;">
+                <th scope="col" style="color: #fff;">word</th>
+                <th scope="col" style="color: #fff;">npub</th>
+                <th scope="col" style="color: #fff;">private key</th>
+              </tr>
+            </thead>
+            <tbody id="tableOfInterest" style="color: #fff;">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex justify-content-center mt-4">
+      <a href="https://getalby.com/p/imtiaan" class="donate-link" target="_blank">⚡️ImTiaan@getalby.com</a>
+    </div>
+    <script src="https://raw.githubusercontent.com/HALFIN-LABS/MyNostr-key-generator-app/master/nostrogen.js"></script>
+  </body>
+</html>
